@@ -1,0 +1,111 @@
+﻿@model Helpers_DataPassing.Models.UserModel
+
+@{
+    ViewData["Title"] = "SignUp";
+}
+
+<h1>SignUp</h1>
+
+<h4>UserModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="SignUp">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword" class="control-label"></label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <textarea asp-for="Address" class="form-control" ></textarea>
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Contact" class="control-label"></label>
+                <input asp-for="Contact" class="form-control" />
+                <span asp-validation-for="Contact" class="text-danger"></span>
+            </div><br />
+            <div class="form-group">
+                <label asp-for="Country" class="control-lable"></label>
+                <select id="ddlCountry" asp-for="Country" asp-items="@ViewBag.LstCountries" class="form-control">
+                    <option value="">--Please Select Country--</option>
+                </select>
+                <span asp-validation-for="Country" class="text-danger"></span>
+            </div><br />
+            <div class="form-group">
+                <label asp-for="City" class="control-label"></label>
+                <select id="ddlCity" asp-for="City" class="form-control">
+                    <option value="">--Please Select City--</option>
+                </select>
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div><br />
+            <div class="form-group">
+                <lable asp-for="Gender" class="control-label"></lable>
+                @foreach(var gender in (List<string>)ViewData["Gender"])
+                {
+                    <input type="radio" asp-for="Gender" value="@gender" />@gender
+                }
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div><br />
+            <div class="form-group form-check">
+                <label class="control-label">
+                    <input type="checkbox" asp-for="Term" class="form-check-input" />
+                    @Html.DisplayNameFor(model => model.Term)
+                </label>
+                <span asp-validation-for="Term" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+<partial name="_ValidationScriptsPartial" />
+<script>
+        jQuery.validator.unobtrusive.adapters.add("checkbox", function (options) {
+        if (options.element.tagName.toUpperCase() == "INPUT" && options.element.type.toUpperCase() == "CHECKBOX") {
+            options.rules["required"] = true;
+            if (options.message) {
+                options.messages["required"] = options.message;
+            }
+        }
+    });
+
+    $(document).ready(function () {
+            $("#ddlCountry").change(function () {
+
+                $.get("/Account/getCity", { CountryId: $(this).val() }, function (data) {
+
+                    $("#ddlCity").empty();
+
+                    $("#ddlCity").append("<option value=''>--Please Select City--</option>");
+
+                    $.each(data, function (index, item) {
+                        $("#ddlCity").append("<option value='" + item.cityId + "'>" + item.cityName + "</option>");
+                    });
+
+                });
+            })
+        });
+</script>
+}
+
